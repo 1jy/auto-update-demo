@@ -40,7 +40,7 @@
     "electron": "^9.1.0"
   },
   "build": {
-    "appId": "com.jewelyu.fw",
+    "appId": "com.example.demo",
     "productName": "a",
     "files": [
       "./app/build"
@@ -51,20 +51,24 @@
     },
     "mac": {
       "icon": "./public/assets/logo.png",
+      "artifactName": "${productName}-${os}-${version}.${ext}",
+      "compression": "maximum",
       "target": [
         "zip"
       ]
     },
     "win": {
-      "icon": "./public/assets/logo.png",
-      "target": [
-        {
-          "target": "zip",
-          "arch": [
-            "ia32"
-          ]
-        }
-      ]
+      "icon": "./public/logo512.png",
+      "target": "nsis",
+      "artifactName": "${productName}-${os}-${version}.${ext}",
+      "compression": "maximum"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "installerIcon": "./public/favicon.ico",
+      "createDesktopShortcut": true
     }
   }
 }

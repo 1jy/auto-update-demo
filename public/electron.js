@@ -8,6 +8,7 @@ const url = require('url')
 let mainWindow
 const log = require("electron-log")
 log.transports.file.level = "info"
+log.transports.console.level = true; 
 function createWindow() {
     //创建浏览器窗口,宽高自定义具体大小你开心就好
     mainWindow = new BrowserWindow({ width: 1440, height: 900, minHeight: 900, minWidth: 1440 })
@@ -30,11 +31,11 @@ function createWindow() {
 
     autoUpdater.logger = log
     log.error("test", autoUpdater.getFeedURL())
-    autoUpdater.setFeedURL(`https://obs.ljy.im/${process.platform === 'darwin' ? 'mac' : 'win'}/`)
-
+    autoUpdater.setFeedURL(`http://obs.ljy.im/${process.platform === 'darwin' ? 'mac' : 'win'}/`)
+    sendUpdateMessage('platform', process.platform === 'darwin' ? 'mac' : 'win');
     // 下面是自动更新的整个生命周期所发生的事件
-    autoUpdater.on('error', function (message) {
-        sendUpdateMessage('error', message);
+    autoUpdater.on('error', function (...args) {
+        sendUpdateMessage('error', args);
     });
     autoUpdater.on('checking-for-update', function (message) {
         sendUpdateMessage('checking-for-update', message);
@@ -51,11 +52,9 @@ function createWindow() {
         sendUpdateMessage('downloadProgress', progressObj);
     });
     // 更新下载完成事件
-    autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
-        sendUpdateMessage('isUpdateNow');
-        ipcMain.on('updateNow', (e, arg) => {
-            autoUpdater.quitAndInstall();
-        });
+    autoUpdater.on('update-downloaded', function (...args) {
+        sendUpdateMessage('isUpdateNow', args);
+        autoUpdater.quitAndInstall();
     });
 
     //执行自动更新检查
